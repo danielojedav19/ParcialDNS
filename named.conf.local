@@ -1,0 +1,26 @@
+zone "empresa.local" {
+    type master;
+    file "/etc/bind/db.empresa.local";
+
+    notify yes;
+    allow-transfer { key maestro-esclavo; };
+    also-notify { 192.168.56.11; };
+};
+
+zone "danielojeda.com" {
+    type master;
+    file "/etc/bind/db.danielojeda.com";
+
+    notify yes;
+    allow-transfer { key maestro-esclavo; };
+    also-notify { 192.168.56.11; };
+};
+
+zone "56.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192";
+
+    notify yes;
+    allow-transfer { key maestro-esclavo; };
+    also-notify { 192.168.56.11; };
+};

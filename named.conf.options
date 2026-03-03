@@ -1,0 +1,12 @@
+options {
+    directory "/var/cache/bind";
+
+    recursion no;   // evita open resolver
+
+    allow-query { any; };
+
+    dnssec-validation auto;
+
+    listen-on { any; };
+    listen-on-v6 { any; };
+};

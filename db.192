@@ -1,0 +1,14 @@
+$TTL 604800
+@   IN  SOA servidor-maestro.empresa.local. admin.empresa.local. (
+        2
+        604800
+        86400
+        2419200
+        604800 )
+
+@       IN  NS      servidor-maestro.empresa.local.
+
+10      IN  PTR     servidor-maestro.empresa.local.
+10      IN  PTR     parcial.danielojeda.com.
+11      IN  PTR     servidor-esclavo.empresa.local.
+12      IN  PTR     cliente.empresa.local.

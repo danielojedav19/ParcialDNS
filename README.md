@@ -1,194 +1,171 @@
-\# Parcial – DNS Maestro/Esclavo con BIND9 + Apache + Ngrok
+# Parcial – DNS Maestro/Esclavo con BIND9 + Apache + Ngrok
 
+**Realizado por:** Daniel Ojeda  
+**Entorno:** Windows + VirtualBox + Vagrant  
+**Máquinas virtuales:** Ubuntu (ubuntu/jammy64)
 
+---
 
-Realizado por: Daniel Ojeda  
+## Topología de Red
 
-Entorno: Windows + VirtualBox + Vagrant  
+**VM1 – servidor-maestro**  
+- IP: 192.168.56.10  
+- Rol: DNS Maestro + Servidor Web Apache  
 
-VMs: Ubuntu (ubuntu/jammy64)
+**VM2 – servidor-esclavo**  
+- IP: 192.168.56.11  
+- Rol: DNS Esclavo + Cliente de pruebas  
 
+**Red privada:** 192.168.56.0/24  
 
+---
 
+## DNS con BIND9
 
+### Configuración implementada
 
+- Servidor DNS Maestro / Esclavo
+- Zona directa
+- Zona inversa
+- Transferencia de zona (AXFR)
+- NOTIFY automático
+- Restricción para evitar Open Resolver
 
+### Archivos de configuración incluidos
 
-\## Topología
+- named.conf.local
+- named.conf.options
+- db.empresa.local
+- db.danielojeda.com
+- db.192
 
+###  Pruebas realizadas
 
+Desde el servidor esclavo:
 
-VM1: servidor-maestro  
+```bash
+dig @192.168.56.11 parcial.danielojeda.com A
+dig @192.168.56.11 -x 192.168.56.10
+```
 
-IP: 192.168.56.10  
+Resultados esperados:
+- Resolución correcta del dominio
+- Resolución inversa correcta
+- Autoridad del servidor esclavo
 
-Rol: DNS Maestro + Apache
+---
 
+## Servidor Web Apache
 
+###  Configuración
 
-VM2: servidor-esclavo  
+VirtualHost personalizado en:
 
-IP: 192.168.56.11  
+```
+/etc/apache2/sites-available/parcial.conf
+```
 
-Rol: DNS Esclavo + Cliente de pruebas
+Dominio configurado:
+```
+parcial.danielojeda.com
+```
 
+###  Compresión GZIP activada
 
+Módulos habilitados:
 
-Red privada: 192.168.56.0/24
+- mod_deflate
+- mod_headers
 
+Comando utilizado:
 
+```bash
+sudo a2enmod deflate
+sudo systemctl restart apache2
+```
 
+---
 
+##  Pruebas con curl
 
+Sin compresión:
 
+```bash
+curl -I http://parcial.danielojeda.com
+```
 
-\## DNS con BIND9
+Con compresión:
 
+```bash
+curl -I -H "Accept-Encoding: gzip" http://parcial.danielojeda.com
+```
 
+Se verificó la presencia de:
 
-\- Configuración Maestro/Esclavo
+```
+Content-Encoding: gzip
+Vary: Accept-Encoding
+```
 
-\- Zona directa e inversa
+---
 
-\- Transferencia segura (AXFR)
+## Verificación con Wireshark
 
-\- NOTIFY automático
+- Captura realizada en interfaz del cliente
+- Filtro aplicado: `http`
+- Se confirmó cabecera `Content-Encoding: gzip`
+- Se verificó reducción de tamaño en paquetes HTTP
 
-\- Protección contra Open Resolver
+---
 
+## Exposición del Servidor con Ngrok
 
+Comando ejecutado:
 
-Pruebas realizadas con:
-
-
-
-dig @192.168.56.11 parcial.danielojeda.com A  
-
-dig @192.168.56.11 -x 192.168.56.10  
-
-
-
-
-
-
-
-\## Apache con compresión gzip
-
-
-
-Módulos activados:
-
-
-
-\- mod\_deflate
-
-\- mod\_headers
-
-
-
-Pruebas:
-
-
-
-curl -I http://parcial.danielojeda.com  
-
-curl -I -H "Accept-Encoding: gzip" http://parcial.danielojeda.com  
-
-
-
-Se verificó:
-
-
-
-Content-Encoding: gzip  
-
-Vary: Accept-Encoding  
-
-
-
-
-
-
-
-\## Verificación con Wireshark
-
-
-
-\- Captura en interfaz cliente
-
-\- Filtro: http
-
-\- Confirmación de cabecera gzip
-
-
-
-
-
-
-
-\## Exposición con Ngrok
-
-
-
-Se ejecutó:
-
-
-
+```bash
 ngrok http 80
-
-
+```
 
 Redirigiendo hacia:
 
-
-
+```
 192.168.56.10:80
+```
 
+Se generó una URL pública que permitió acceder al servidor web desde fuera de la red local.
 
+Se creó página personalizada:
 
-Se verificó acceso remoto correcto.
+```
+pagina_ngrok.html
+```
 
+Contenido verificado remotamente.
 
+---
 
+## Impacto Técnico de la Compresión
 
+### Ventajas
+- Reduce tráfico de red
+- Mejora tiempos de respuesta
+- Optimiza ancho de banda
+- Mejora experiencia del usuario
 
+### Desventajas
+- Incremento leve en uso de CPU
+- Mayor procesamiento en el servidor
 
+---
 
-\## Impacto de la compresión
-
-
-
-Ventajas:
-
-\- Reduce tráfico
-
-\- Mejora tiempos de carga
-
-
-
-Desventajas:
-
-\- Incremento leve en uso de CPU
-
-
-
-
-
-
-
-\## Conclusión
-
-
+## Conclusión
 
 Se implementó correctamente:
 
+- Infraestructura DNS Maestro/Esclavo funcional
+- Servidor Apache configurado con VirtualHost
+- Compresión GZIP activa y validada
+- Captura y análisis de tráfico con Wireshark
+- Exposición segura del servidor a Internet mediante túnel ngrok
 
-
-\- DNS Maestro/Esclavo seguro
-
-\- Apache con compresión activa
-
-\- Validación técnica
-
-\- Exposición a Internet
-
+Proyecto validado técnica y funcionalmente.

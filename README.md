@@ -10,7 +10,7 @@ VMs: Ubuntu (ubuntu/jammy64)
 
 
 
----
+
 
 
 
@@ -38,7 +38,7 @@ Red privada: 192.168.56.0/24
 
 
 
----
+
 
 
 
@@ -68,7 +68,7 @@ dig @192.168.56.11 -x 192.168.56.10
 
 
 
----
+
 
 
 
@@ -106,7 +106,7 @@ Vary: Accept-Encoding
 
 
 
----
+
 
 
 
@@ -122,7 +122,7 @@ Vary: Accept-Encoding
 
 
 
----
+
 
 
 
@@ -150,7 +150,7 @@ Se verificó acceso remoto correcto.
 
 
 
----
+
 
 
 
@@ -172,7 +172,7 @@ Desventajas:
 
 
 
----
+
 
 
 
